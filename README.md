@@ -162,3 +162,11 @@ Changes before connecting a real ad provider:
 - Public landing, Cara Kerja, FAQ, Tentang, Privacy, and Terms pages so the site has crawlable public content.
 - Regular AdSense remains separate from rewarded-ad tickets. Ad clicks never grant KuisPoin points/rewards.
 - Rewarded provider remains controlled by `REWARDED_AD_PROVIDER`; keep `DEMO` only for staging tests until a real rewarded provider is integrated.
+
+## v0.15 Analytics & Unit Economics
+- Referral attribution supports both referral links and manual referral-code input through the same server-side atomic RPC.
+- Manual code is normalized, rate-limited, one-time, anti-self-referral, and restricted by a configurable attribution window.
+- Admin Analytics separates 7-day product/reward metrics from all-time redeemable-point exposure.
+- Revenue/profit is intentionally not estimated until trusted ad-provider revenue data is available.
+- Apply `database/013_referral_manual_code.sql` after migration 012.
+- Apply `database/014_economy_analytics.sql` for scalable all-time economy aggregation before using the v0.15 admin analytics page.

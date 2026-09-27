@@ -20,3 +20,4 @@ input,select{width:100%;padding:13px;border:1px solid #dfe2eb;border-radius:12px
 @media(max-width:760px){.publicHeader{align-items:flex-start}.publicNav{gap:10px;flex-wrap:wrap;justify-content:flex-end}.publicNav>a:not(.publicLogin){display:none}.publicHero{margin-top:35px}.publicGrid{grid-template-columns:1fr}.publicFooter{grid-template-columns:1fr}.footerLinks{justify-content:flex-start}.legalPage h1{font-size:36px}}
 
 .referralCode{letter-spacing:.08em;font-size:28px}.referralLink{overflow-wrap:anywhere;font-size:12px}.stack{display:grid;gap:14px}.stack>.card{margin-bottom:0}
+.referralClaimForm{display:flex;gap:10px;align-items:stretch}.referralClaimForm input{flex:1;min-width:0;text-transform:uppercase;letter-spacing:.06em}@media(max-width:560px){.referralClaimForm{flex-direction:column}}

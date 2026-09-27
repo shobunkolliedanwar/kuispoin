@@ -7,6 +7,7 @@ export type ReferralConfig = {
   min_account_age_hours: number;
   min_completed_quizzes: number;
   max_qualified_per_referrer_30d: number;
+  attribution_window_days: number;
 };
 
 export const defaultReferralConfig: ReferralConfig = {
@@ -16,6 +17,7 @@ export const defaultReferralConfig: ReferralConfig = {
   min_account_age_hours: 24,
   min_completed_quizzes: 3,
   max_qualified_per_referrer_30d: 20,
+  attribution_window_days: 7,
 };
 
 export async function getReferralConfig(): Promise<ReferralConfig> {
