@@ -6,10 +6,11 @@ const root = process.cwd();
 const read = (p: string) => readFileSync(resolve(root, p), 'utf8');
 
 describe('Next.js route source integrity', () => {
-  it('keeps root as a login redirect and dashboard in its own route', () => {
+  it('keeps a public root and dashboard in its own protected route', () => {
     const rootPage = read('app/page.tsx');
     const dashboard = read('app/dashboard/page.tsx');
-    expect(rootPage).toContain("redirect('/login')");
+    expect(rootPage).toContain('PublicHeader');
+    expect(rootPage).toContain('href="/login"');
     expect(dashboard).toContain('export default async function DashboardPage');
     expect(dashboard).toContain('@/components/UserBar');
     expect(dashboard).toContain("redirect('/login')");

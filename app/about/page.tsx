@@ -1,0 +1,3 @@
+import PublicHeader from '@/components/PublicHeader'; import PublicFooter from '@/components/PublicFooter';
+export const metadata={title:'Tentang'};
+export default function Page(){return <div className="publicPage"><PublicHeader/><main className="legalPage"><h1>Tentang KuisPoin</h1><p>KuisPoin adalah layanan kuis berbasis web yang menggabungkan permainan pengetahuan, misi, progres, dan reward. Kami membangun sistem reward dengan pencatatan transaksi dan pemeriksaan keamanan agar pengalaman pengguna tetap jelas dan konsisten.</p><h2>Prinsip produk</h2><p>Reward redeemable dan reward iklan non-tunai dipisahkan. KuisPoin tidak menjanjikan penghasilan tetap dan tidak memberi imbalan karena pengguna mengklik iklan.</p></main><PublicFooter/></div>}

@@ -155,3 +155,10 @@ Changes before connecting a real ad provider:
 - request duration and idempotent verification state are logged without payout/secret data.
 
 `REWARDED_AD_PROVIDER=DEMO` is staging/local simulation only. Switch it away from DEMO when a real provider adapter is connected.
+
+## v0.13.2 — Google AdSense integration
+- Production AdSense script in the root layout using `ca-pub-3192016222321677` (overridable by env).
+- `public/ads.txt` for Google seller authorization.
+- Public landing, Cara Kerja, FAQ, Tentang, Privacy, and Terms pages so the site has crawlable public content.
+- Regular AdSense remains separate from rewarded-ad tickets. Ad clicks never grant KuisPoin points/rewards.
+- Rewarded provider remains controlled by `REWARDED_AD_PROVIDER`; keep `DEMO` only for staging tests until a real rewarded provider is integrated.
