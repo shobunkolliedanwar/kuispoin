@@ -1,0 +1,11 @@
+'use client';
+import { useState } from 'react';
+
+type Usage={used:number;remaining:number;daily_cap:number;active_sessions:number};
+type Props={enabled:boolean;provider:string;tickets:number;dailyCap:number;initialUsage:Usage};
+export default function RewardedAdCard({enabled,provider,tickets,dailyCap,initialUsage}:Props){
+ const [busy,setBusy]=useState(false),[msg,setMsg]=useState(''),[walletTickets,setWalletTickets]=useState(tickets),[usage,setUsage]=useState(initialUsage);
+ const exhausted=usage.remaining<=0;
+ async function watch(){setBusy(true);setMsg('');try{const s=await fetch('/api/ads/rewarded/session',{method:'POST'});const sj=await s.json();if(!s.ok){if(s.status===429)setUsage(u=>({...u,remaining:0,used:u.daily_cap}));throw new Error(sj.error||'Gagal memulai iklan')}if(sj.usage)setUsage(sj.usage);if(!sj.demo){setMsg('Sesi iklan siap. Adapter provider production belum diaktifkan.');return}setMsg('Demo rewarded video berjalan…');await new Promise(r=>setTimeout(r,1800));const v=await fetch('/api/ads/rewarded/demo-complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:sj.sessionId})});const vj=await v.json();if(!v.ok)throw new Error(vj.error||'Reward gagal diverifikasi');setWalletTickets(Number(vj.wallet?.tickets??walletTickets));if(vj.usage)setUsage(vj.usage);setMsg(vj.wallet?.already_verified?'Reward sesi ini sebelumnya sudah diterima.':`Berhasil! +${sj.rewardAmount} tiket non-tunai.`)}catch(e){setMsg(e instanceof Error?e.message:'Terjadi kesalahan')}finally{setBusy(false)}}
+ return <div className="card rewardedCard"><div className="row"><div><p className="eyebrow">REWARDED VIDEO</p><h3>🎟️ Tiket Bonus</h3></div><span className="badge">{walletTickets} tiket</span></div><p className="muted">Tonton video opsional untuk mendapat tiket non-tunai. Tiket tidak dapat dicairkan menjadi rupiah.</p><p className="muted">Reward hari ini: <b>{usage.used}/{usage.daily_cap}</b> • Sisa <b>{usage.remaining}</b>{usage.active_sessions>0?' • Ada sesi aktif':''}</p><button className="btn secondary" disabled={!enabled||busy||exhausted} onClick={watch}>{busy?'Memproses…':exhausted?'Batas hari ini tercapai':enabled?(provider==='DEMO'?'Coba Rewarded Ad (Demo)':'Tonton Video'):'Belum tersedia'}</button>{msg&&<p className="adMessage" aria-live="polite">{msg}</p>}</div>
+}
