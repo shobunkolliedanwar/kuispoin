@@ -16,11 +16,22 @@ describe('Next.js route source integrity', () => {
     expect(dashboard).toContain("redirect('/login')");
   });
 
-  it('uses dashboard as the Google login callback', () => {
-    expect(read('components/LoginButton.tsx')).toContain("callbackUrl: '/dashboard'");
+  it('uses dashboard as the safe default Google login callback', () => {
+    const loginButton = read('components/LoginButton.tsx');
     const login = read('app/login/page.tsx');
+
+    // LoginButton may accept a referral-aware callback,
+    // but /dashboard must remain the safe default.
+    expect(loginButton).toContain("callbackUrl = '/dashboard'");
+    expect(loginButton).toContain(
+      "callbackUrl.startsWith('/') && !callbackUrl.startsWith('//')",
+    );
+    expect(loginButton).toContain(
+      "signIn('google', { callbackUrl: safeCallback })",
+    );
+
+    // Normal login still defaults to the dashboard.
     expect(login).toContain("'/dashboard'");
-    expect(login).toContain("'/admin'");
   });
 
   it('keeps user navigation away from the root login redirect', () => {

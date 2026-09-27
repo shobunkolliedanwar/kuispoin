@@ -4,6 +4,7 @@ import { requireActiveUser } from '@/lib/access';
 import { isUuid } from '@/lib/validation';
 import { allowAction } from '@/lib/rate-limit';
 import { logEvent, requestId } from '@/lib/observability';
+import { tryQualifyReferral } from '@/lib/referrals';
 type Answer={questionId:string;optionId:string};
 export async function POST(req:Request){
  const started=Date.now(),rid=requestId(req),route='/api/quiz/finish';
@@ -15,6 +16,7 @@ export async function POST(req:Request){
  const clean=b.answers.filter(x=>isUuid(x?.questionId)&&isUuid(x?.optionId)).slice(0,100);
  const {data,error}=await supabaseAdmin.rpc('finish_quiz_atomic',{p_user:userId,p_attempt:b.attemptId,p_answers:clean});
  if(error){const m=error.message;const status=m.includes('ALREADY')?409:m.includes('NOT_FOUND')?404:400;await logEvent({event:'QUIZ_FINISH_FAILED',level:status===409?'WARN':'ERROR',requestId:rid,route,userId,entityType:'QUIZ_ATTEMPT',entityId:b.attemptId,statusCode:status,durationMs:Date.now()-started,metadata:{reason:m.split(':')[0],answerCount:clean.length}});return NextResponse.json({error:m.includes('ALREADY')?'Attempt sudah selesai':'Gagal menyelesaikan kuis'},{status,headers:{'x-request-id':rid}})}
+ await tryQualifyReferral(userId).catch(()=>null);
  await logEvent({event:'QUIZ_FINISHED',requestId:rid,route,userId,entityType:'QUIZ_ATTEMPT',entityId:b.attemptId,statusCode:200,durationMs:Date.now()-started,metadata:{answerCount:clean.length}});
  return NextResponse.json(data,{headers:{'x-request-id':rid}});
 }

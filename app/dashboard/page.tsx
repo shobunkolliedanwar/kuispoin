@@ -49,6 +49,7 @@ export default async function DashboardPage() {
           <div className="card"><b className="big">{attempts?.length ?? 0}</b><p className="muted">Kuis selesai</p></div>
           <div className="card"><b className="big">{completedMissions}/{missions.length}</b><p className="muted">Misi hari ini</p></div>
         </div>
+        <div className="card"><div className="row"><div><h3>Undang Teman</h3><p className="muted">Bagikan kode referral dan dapatkan bonus setelah teman memenuhi syarat.</p></div><Link className="miniBtn" href="/referral">Referral</Link></div></div>
         <div className="card"><div className="row"><div><h3>Misi Harian</h3><p className="muted">Selesaikan target harian dan klaim reward.</p></div><Link className="miniBtn" href="/missions">Lihat</Link></div></div>
         <RewardedAdCard enabled={adsConfig.rewarded_enabled && rewardedProvider() !== 'DISABLED'} provider={rewardedProvider()} tickets={Number(noncash?.tickets ?? 0)} dailyCap={adsConfig.daily_rewarded_cap} initialUsage={adUsage} />
         <div className="ad"><b>DISPLAY AD SLOT</b><br/>Slot iklan biasa. Tidak memberikan poin atau reward karena klik.</div>
