@@ -7,16 +7,20 @@ import { authOptions } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { getMissionState, getStreak } from '@/lib/rewards';
 import { formatRupiah, normalizePointsPerRupiah, pointsToRupiah } from '@/lib/point-value';
+import RewardedAdCard from '@/components/RewardedAdCard';
+import { getAdsConfig, rewardedProvider } from '@/lib/ads';
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect('/login');
 
   const userId = session.user.id;
-  const [{ data: transactions }, { data: attempts }, { data: settings }, missions, streak] = await Promise.all([
+  const [{ data: transactions }, { data: attempts }, { data: settings }, { data: noncash }, adsConfig, missions, streak] = await Promise.all([
     supabaseAdmin.from('point_transactions').select('amount').eq('user_id', userId),
     supabaseAdmin.from('quiz_attempts').select('id').eq('user_id', userId).eq('status', 'COMPLETED'),
     supabaseAdmin.from('app_settings').select('value').eq('key', 'reward_config').maybeSingle(),
+    supabaseAdmin.from('noncash_wallets').select('tickets,hints,xp').eq('user_id', userId).maybeSingle(),
+    getAdsConfig(),
     getMissionState(userId),
     getStreak(userId),
   ]);
@@ -45,7 +49,8 @@ export default async function DashboardPage() {
           <div className="card"><b className="big">{completedMissions}/{missions.length}</b><p className="muted">Misi hari ini</p></div>
         </div>
         <div className="card"><div className="row"><div><h3>Misi Harian</h3><p className="muted">Selesaikan target harian dan klaim reward.</p></div><Link className="miniBtn" href="/missions">Lihat</Link></div></div>
-        <div className="ad">Slot iklan</div>
+        <RewardedAdCard enabled={adsConfig.rewarded_enabled && rewardedProvider() !== 'DISABLED'} provider={rewardedProvider()} tickets={Number(noncash?.tickets ?? 0)} dailyCap={adsConfig.daily_rewarded_cap} />
+        <div className="ad"><b>DISPLAY AD SLOT</b><br/>Slot iklan biasa. Tidak memberikan poin atau reward karena klik.</div>
       </section><Nav />
     </main>
   );

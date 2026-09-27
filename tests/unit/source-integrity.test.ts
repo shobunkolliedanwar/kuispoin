@@ -41,6 +41,13 @@ describe('Next.js route source integrity', () => {
     expect(existsSync(resolve(root, 'database/009_observability.sql'))).toBe(true);
   });
 
+  it('keeps rewarded ads isolated from redeemable points', () => {
+    expect(existsSync(resolve(root, 'database/010_ads_foundation.sql'))).toBe(true);
+    expect(existsSync(resolve(root, 'components/RewardedAdCard.tsx'))).toBe(true);
+    expect(existsSync(resolve(root, 'app/api/ads/rewarded/session/route.ts'))).toBe(true);
+    expect(existsSync(resolve(root, 'app/api/ads/rewarded/demo-complete/route.ts'))).toBe(true);
+  });
+
   it('keeps settings and wallet components in their own route folders', () => {
     expect(existsSync(resolve(root, 'app/admin/settings/SettingsForm.tsx'))).toBe(true);
     expect(read('app/admin/settings/page.tsx')).toContain('./SettingsForm');

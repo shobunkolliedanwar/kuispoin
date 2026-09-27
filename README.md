@@ -134,3 +134,9 @@ Apply `database/009_observability.sql` after migration 008. It adds a server-onl
 Admin: `/admin/operations` shows DB health, 24h error/warning counts, recent latency snapshot, and the latest 100 operational events. Critical quiz-finish and withdrawal flows emit structured events without storing payout account numbers or secrets.
 
 `/api/health` now returns service version, DB state, latency, timestamp and request ID, with `cache-control: no-store`.
+
+## v0.13 Ads Foundation
+
+Rewarded ads are isolated from redeemable points. `database/010_ads_foundation.sql` adds an atomic, idempotent non-cash reward flow using `ad_reward_sessions` and `noncash_wallets`.
+
+For staging smoke tests only, set `REWARDED_AD_PROVIDER=DEMO`. The demo simulates a completed rewarded video and grants a non-cash ticket. It never writes to `point_transactions`. Keep `REWARDED_AD_PROVIDER=DISABLED` until migration 010 is applied. A real production provider must replace the demo completion endpoint with provider-backed verification/webhook logic before public launch.
