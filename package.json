@@ -1,0 +1,31 @@
+{
+  "name": "kuispoin-mvp",
+  "version": "0.5.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify": "npm run typecheck && npm run test && npm run build",
+    "test:integration": "vitest run tests/integration --maxWorkers=1",
+    "verify:money": "npm run verify && npm run test:integration"
+  },
+  "dependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "next": "latest",
+    "next-auth": "^4.24.11",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest",
+    "@supabase/supabase-js": "^2.57.4"
+  },
+  "devDependencies": {
+    "vitest": "4.1.11"
+  }
+}

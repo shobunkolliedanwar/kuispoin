@@ -1,0 +1,9 @@
+import { supabaseAdmin } from '@/lib/supabase-admin';
+export function jakartaDayBounds(){const now=new Date();const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jakarta',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);return {date:parts,start:`${parts}T00:00:00+07:00`,end:`${parts}T23:59:59.999+07:00`}}
+export async function getMissionState(userId:string){const b=jakartaDayBounds();const [{data:missions},{data:attempts},{data:answers},{data:claims}]=await Promise.all([
+ supabaseAdmin.from('missions').select('*').eq('is_active',true).order('target'),
+ supabaseAdmin.from('quiz_attempts').select('id').eq('user_id',userId).eq('status','COMPLETED').gte('completed_at',b.start).lte('completed_at',b.end),
+ supabaseAdmin.from('quiz_answers').select('id,is_correct,quiz_attempts!inner(user_id)').eq('quiz_attempts.user_id',userId).gte('answered_at',b.start).lte('answered_at',b.end),
+ supabaseAdmin.from('mission_claims').select('mission_id').eq('user_id',userId).eq('period_date',b.date)
+]);const a=answers??[], done=new Set((claims??[]).map(x=>x.mission_id));return (missions??[]).map(m=>{const progress=m.metric==='ANSWERS'?a.length:m.metric==='CORRECT_ANSWERS'?a.filter(x=>x.is_correct).length:(attempts??[]).length;return {...m,progress:Math.min(progress,m.target),completed:progress>=m.target,claimed:done.has(m.id)}})}
+export async function getStreak(userId:string){const {data}=await supabaseAdmin.from('quiz_attempts').select('completed_at').eq('user_id',userId).eq('status','COMPLETED').not('completed_at','is',null).order('completed_at',{ascending:false}).limit(200);const days=new Set((data??[]).map(x=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jakarta'}).format(new Date(x.completed_at))));let n=0,d=new Date();for(let i=0;i<365;i++){const key=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jakarta'}).format(d);if(days.has(key))n++;else if(i>0)break;d=new Date(d.getTime()-86400000)}return n}
